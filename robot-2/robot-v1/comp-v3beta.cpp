@@ -60,6 +60,17 @@ bool PistonState = false;
 
 void initalize(void) {
     // All activities that occur before the competition starts.
+    Drivetrain.setDriveVelocity(100, percent);
+    Drivetrain.setTurnVelocity(100, percent);
+    Drivetrain.setStopping(coast);
+    Conveyor.setVelocity(100, percent);
+    Conveyor.setMaxTorque(100, percent);
+    Conveyor.setStopping(coast);
+    Intake.setVelocity(100, percent);
+    Intake.setMaxTorque(100, percent);
+    Intake.setStopping(coast);
+
+    Brain.Screen.setFont(mono30);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -110,17 +121,16 @@ void controlDrivetrain() {
     handleMotorControl(RightDriveSmart, drivetrainRightSideSpeed, DrivetrainRNeedsToBeStopped_Controller);
 }
 
-void pistonLoop() {
-    while (true) {
-        if (Controller.ButtonA.pressing()) {
-            PistonState = !PistonState;
-            Piston.set(PistonState);
-            while (Controller.ButtonA.pressing()) {
-                wait(20, msec);
-            }
-        }
-        wait(20, msec);
+void controlPiston() {
+    static bool lastButtonState = false;  // Track the previous state of the button
+    bool currentButtonState = Controller.ButtonA.pressing();
+
+    if (currentButtonState && !lastButtonState) {  // Detect button press
+        PistonState = !PistonState;  // Toggle the piston state
+        Piston.set(PistonState);
     }
+
+    lastButtonState = currentButtonState;  // Update the previous state
 }
 
 void controlConveyor() {
@@ -163,6 +173,19 @@ int stuckHelperLoop() {
     return 0;
 }
 
+int controllerLoop() {
+    // Handle controller input
+    while (true) {
+        if (RemoteControlCodeEnabled) {
+            controlDrivetrain();
+            controlConveyor();
+            controlIntake();
+            controlPiston();
+        }
+        wait(20, msec);
+    }
+}
+
 int infoLoop() {
     // Prints info on brain & controller
     while (true) {
@@ -190,15 +213,11 @@ int infoLoop() {
 
 
 void userControl(void) {
-    // Handle controller input
-    while (true) {
-        if (RemoteControlCodeEnabled) {
-            controlDrivetrain();
-            controlConveyor();
-            controlIntake();
-        }
-        wait(20, msec);
-    }
+    Controller.rumble(". . . -");
+
+    task controllerTask(controllerLoop);
+    task stuckHelperTask(stuckHelperLoop);
+    task infoTask(infoLoop);
 }
 
 // Set up callbacks and stuff
