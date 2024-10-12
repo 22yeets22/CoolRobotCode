@@ -54,19 +54,9 @@ bool drivetrainRNeedsToBeStopped = true;
 // Robot components
 bool pistonState = false;
 
-
-/*---------------------------------------------------------------------------*/
-/*                          Pre-Autonomous Functions                         */
-/*                                                                           */
-/*  You may want to perform some actions before the competition starts.      */
-/*  Do them in the following function.  You must return from this function   */
-/*  or the autonomous and usercontrol tasks will not be started.  This       */
-/*  function is only called once after the V5 has been powered on and        */
-/*  not every time that the robot is disabled.                               */
-/*---------------------------------------------------------------------------*/
-
 /**
  * Initializes the robot's systems before the competition starts.
+ * This function is only called once after the V5 has been powered on and not every time that the robot is disabled.
  *
  * @return None
  */
