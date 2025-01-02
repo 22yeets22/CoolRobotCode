@@ -10,7 +10,8 @@ Middle school robot
 - V2 &rarr; Second version. Hook chain.
 ### Robot 2
 High school robot
-- V1 &rarr; Hook chain robot.
+- V1 &rarr; First version of the robot. Hook chain robot.
+- V2 &rarr; Second version. Rebuild, general improvements.
 
 ## IQ Robots
 ### Robot 1
