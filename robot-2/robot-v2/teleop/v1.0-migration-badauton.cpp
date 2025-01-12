@@ -37,7 +37,7 @@ inertial Inertial = inertial(PORT9);
 smartdrive Drivetrain = smartdrive(leftDriveSmart, rightDriveSmart, Inertial, 239.3893602, 317.5, 228.6, mm, 2);
 
 // Defining other motors: converyor and intake
-motor conveyor = motor(PORT17, ratio18_1, false);
+motor conveyor = motor(PORT17, ratio18_1, true);
 motor intake = motor(PORT3, ratio18_1, true); 
 
 // Defining the pistons
@@ -300,6 +300,7 @@ void controlPistonSweeper() {
  *
  * Otherwise, the motors will stop if they are not already stopped.
  */
+
 void controlIntakeAndConveyor() {
     // Handle intake and conveyor control
     if (Controller.ButtonR1.pressing()) {
@@ -312,6 +313,9 @@ void controlIntakeAndConveyor() {
         intake.spin(reverse);
         conveyorActive = true;
         intakeActive = true;
+    } else {
+        intakeActive = false;
+        conveyorActive = false;
     }
 
     // Stop conveyor and intake if no active command
