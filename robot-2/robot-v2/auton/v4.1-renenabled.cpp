@@ -78,8 +78,8 @@ void autonomous(void) {
     pistonClamp.set(true); // Goal 1 in possession
     wait(300, msec);
 
-    //intake.spin(forward);
-    //conveyor.spin(forward);
+    intake.spin(forward);
+    conveyor.spin(forward);
     turnTo(183);
 
     driveFor(20,3000, 60.0); // Starting to intake rings
@@ -96,18 +96,17 @@ void autonomous(void) {
     driveFor(-30, 1500); // Placed in positive corner
     pistonClamp.set(false);
 
-    //intake.stop();
-    //conveyor.stop();
+    intake.stop();
+    conveyor.stop();
     driveFor(2, 400); 
     turnTo(169, 2000); // Aligning
 
-    // Starting from here, needs fixes
     driveFor(101.5, 5000);
     turnTo(-85, 2000);
     driveFor(-24, 5000, 60.0); // Driving towards Goal 2
     pistonClamp.set(true);  // Goal 2 in possession
-    //conveyor.spin(forward);
-    //intake.spin(forward);
+    conveyor.spin(forward);
+    intake.spin(forward);
     wait(500, msec);
     turnTo(45, 2000);
     driveFor(31.5, 3000, 60.0); // Intaking ring
@@ -128,14 +127,13 @@ void autonomous(void) {
     driveFor(-12, 2000, 60.0); // Shove into corner
     pistonClamp.set(false); // Released Goal 2
     driveFor(16, 2000, 60.0);
-    // Needs testing
     turnTo(90, 2000);
     driveFor(-12,2000, 60.0);
     pistonClamp.set(true); // Goal 3 in possession
     turnTo(180, 2000);
     driveFor(20, 2000, 60.0);
-    //intake.stop();
-    //conveyor.stop();
+    intake.stop();
+    conveyor.stop();
     return;
 }
 
