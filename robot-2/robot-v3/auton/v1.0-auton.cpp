@@ -193,24 +193,9 @@ void autonomous(void) {
     Drivetrain.setHeading(90, degrees);   
 }
 
-int detectRingLoop() {
-    while (true) {
-        if (Optical.color() == vex::color::red && Optical.isNearObject()) {
-            isRingDetected = true;
-        } else {
-            isRingDetected = false;
-        }
-        wait(20, msec);
-    }
-
-    return 0;
-}
-
 int main() {
     // Set up callbacks for autonomous and driver control periods.
     Competition.autonomous(autonomous);
-
-    task detectRingTask = task(detectRingLoop);
 
     // Initalizing
     Drivetrain.setDriveVelocity(DEFAULT_DRIVE_VELOCITY, percent);
