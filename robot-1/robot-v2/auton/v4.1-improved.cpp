@@ -196,7 +196,7 @@ void autonomous(void) {
 
     // Drive all the way down the field
     printf("\033[31m====Driving down the field====\n");
-    turnTo(3, 4500, 25);
+    turnTo(4, 4500, 25);
     driveFor(84, 9000, 50);
     wait(1500, msec);
     driveFor(-12, 1500);
