@@ -4,19 +4,13 @@
 
 // Drivetrain motor groups
 pros::MotorGroup left_motors({-1, -2, 3}, pros::MotorGears::blue);
-// the 5.5w motor is on port 5
-pros::MotorGroup l_motors({7, 5, 4});
-
-// before lemlib runs:
-l_motors.set_gearing(pros::MotorGears::green, 1);  // set gearing for 5.5w motor
-
-pros::MotorGroup right_motors({11, 12, -13}, pros::MotorGears::blue);
+pros::MotorGroup right_motors({-8, 9, 10}, pros::MotorGears::blue);
 
 // Intake motors
-pros::Motor front_roller(5, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
-pros::Motor top_roller(5, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
-pros::Motor back_roller(5, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
-pros::Motor cycle_roller(5, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
+pros::Motor front_roller(19, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
+pros::Motor top_roller(20, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
+pros::Motor back_roller(12, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
+pros::Motor cycle_roller(11, pros::v5::MotorGears::green, pros::v5::MotorUnits::degrees);
 
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&left_motors,                // left motor group
@@ -85,9 +79,14 @@ const char* autonNames[] = {
     "Blue Right"};
 const int NUM_AUTONS = 5;  // total number of auton routines
 
-const int LOOP_DELAY = 30;  // loop delay in milliseconds
+const int LOOP_DELAY = 20;  // loop delay in milliseconds
 
 void initalize() {
+    // fix up the 5.5w
+    left_motors.set_gearing(pros::MotorGears::green, 2);   // set gearing for 5.5w motor
+    right_motors.set_gearing(pros::MotorGears::green, 0);  // set gearing for 5.5w motor
+
+    // calibrate chassis + initialize lcd
     pros::lcd::initialize();
     chassis.calibrate();
 }
@@ -123,21 +122,99 @@ void autonomous() {
 }
 
 void controlDrivetrain() {
-    while (true) {
-        int left = controller.get_analog(ANALOG_LEFT_Y);
-        int right = controller.get_analog(ANALOG_RIGHT_Y);
+    int left = controller.get_analog(ANALOG_LEFT_Y);
+    int right = controller.get_analog(ANALOG_RIGHT_Y);
 
-        chassis.tank(left, right);
+    chassis.tank(left, right);
 
-        // print robot location to the brain screen
-        controller.print(0, 1, "X:%.1f Y:%.1f T:%.1f", chassis.getPose().x, chassis.getPose().y, chassis.getPose().theta);
+    // print robot location to the brain screen
+    controller.print(0, 1, "X:%.1f Y:%.1f T:%.1f", chassis.getPose().x, chassis.getPose().y, chassis.getPose().theta);
+}
 
-        pros::delay(LOOP_DELAY);
+// Toggle states for intake control
+bool intakeForward = false;
+bool intakeReverse = false;
+bool cycleForward = false;
+bool cycleReverse = false;
+
+// Button press tracking to detect new presses
+bool r1Pressed = false;
+bool r2Pressed = false;
+bool l1Pressed = false;
+bool l2Pressed = false;
+
+void controlIntake() {
+    // R1: Toggle intake forward (front, top, back rollers)
+    bool r1Current = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
+    if (r1Current && !r1Pressed) {
+        intakeForward = !intakeForward;
+        if (intakeForward) intakeReverse = false;  // Turn off reverse if forward is on
+    }
+    r1Pressed = r1Current;
+
+    // R2: Toggle intake reverse
+    bool r2Current = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2);
+    if (r2Current && !r2Pressed) {
+        intakeReverse = !intakeReverse;
+        if (intakeReverse) intakeForward = false;  // Turn off forward if reverse is on
+    }
+    r2Pressed = r2Current;
+
+    // L1: Toggle cycle roller forward
+    bool l1Current = controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
+    if (l1Current && !l1Pressed) {
+        cycleForward = !cycleForward;
+        if (cycleForward) cycleReverse = false;
+    }
+    l1Pressed = l1Current;
+
+    // L2: Toggle cycle roller reverse
+    bool l2Current = controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2);
+    if (l2Current && !l2Pressed) {
+        cycleReverse = !cycleReverse;
+        if (cycleReverse) cycleForward = false;
+    }
+    l2Pressed = l2Current;
+
+    // X button: front and top rollers spin in opposite directions
+    bool oppositeMode = controller.get_digital(pros::E_CONTROLLER_DIGITAL_X);
+
+    // Apply intake motor states
+    if (oppositeMode) {
+        // Front spins one way, top spins the opposite way
+        front_roller.move(-100);
+        top_roller.move(-100);
+        back_roller.move(100);
+    } else if (intakeForward) {
+        front_roller.move(-100);  // Reversed
+        top_roller.move(100);
+        back_roller.move(100);
+    } else if (intakeReverse) {
+        front_roller.move(100);  // Reversed
+        top_roller.move(-100);
+        back_roller.move(-100);
+    } else {
+        front_roller.move(0);
+        top_roller.move(0);
+        back_roller.move(0);
+    }
+
+    // Apply cycle roller states
+    if (cycleForward) {
+        cycle_roller.move(100);
+    } else if (cycleReverse) {
+        cycle_roller.move(-100);
+    } else {
+        cycle_roller.move(0);
     }
 }
 
 void opcontrol() {
-    controlDrivetrain();
+    while (true) {
+        controlDrivetrain();
+        controlIntake();
+        pros::delay(LOOP_DELAY);
+    }
 }
 
 // #include "main.h"
