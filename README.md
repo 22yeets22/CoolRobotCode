@@ -1,24 +1,10 @@
 # Cool Robot Code
-### Code for cool robots
+### Code for V5 team 33111A
 
-## V5 Robots
-### Robot 1
-Middle school robot
-- V1 &rarr; First version of the robot. Sliding conveyor.
-- V2 &rarr; Second version. Hook chain.
-### Robot 2
-High school robot
-- V1 &rarr; First version of the robot. Hook chain robot.
-- V2 &rarr; Second version. Rebuild, general improvements.
+This repository contains the code for the VEX Robotics Competition team 33111A.
 
-## IQ Robots
-### Robot 1
-Middle school robot
-- V1 &rarr; First version of the robot built with Ethan.
-    - Inital build based on Ben Lipper bot.
-    - With bumper sensor
-- V2 &rarr; Second version built for the competition.
+## Season 2025-2026
+Push Back is the 2025-2026 VEX Robotics Competition game. See the readme in the `2025-2026 Push Back` folder for more details.
 
-### Robot 2
-Elementary school robot
-- V1 &rarr; First version of the robot.
+## Season 2024-2025
+High Stakes is the 2024-2025 VEX Robotics Competition game. Two robots were coded in this repository. See the readme there for more details.

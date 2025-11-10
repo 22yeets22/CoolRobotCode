@@ -131,37 +131,6 @@ bool yPressed = false;
 pros::Task* debugPrintTask = nullptr;
 pros::Task* autonSelectorTask = nullptr;
 
-// Helper function to disable all intake modes
-void disableAllIntakeModes() {
-    intakeForward = false;
-    intakeReverse = false;
-    cycleForward = false;
-    cycleReverse = false;
-    topGoalMode = false;
-}
-
-// Helper function to set all roller velocities at once
-void setRollerVelocities(int back, int front, int top, int index) {
-    backRoller.move_velocity(back);
-    frontRoller.move_velocity(front);
-    topRoller.move_velocity(top);
-    indexRoller.move_velocity(index);
-}
-
-// Helper function to handle button press logic
-bool handleButtonPress(pros::controller_digital_e_t button, bool& currentPressed, bool& targetMode) {
-    bool buttonCurrent = controller.get_digital(button);
-    if (buttonCurrent && !currentPressed) {
-        targetMode = !targetMode;
-        if (targetMode) {
-            disableAllIntakeModes();
-            targetMode = true;  // Re-enable the target mode
-            return true;  // Mode was activated
-        }
-    }
-    currentPressed = buttonCurrent;
-    return false;  // Mode was not activated
-}
 
 void debugPrint(void* param) {
     // Separate task for printing robot position and status to screens
